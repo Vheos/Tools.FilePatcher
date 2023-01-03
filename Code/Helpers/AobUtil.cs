@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Vheos.Tools.FilePatcher.Code.Enums;
+using ValueType = Vheos.Tools.FilePatcher.Code.Enums.ValueType;
 
 namespace Vheos.Tools.FilePatcher.Code.Helpers
 {

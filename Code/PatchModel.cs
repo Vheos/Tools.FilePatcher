@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Vheos.Tools.FilePatcher.Code.Enums;
 using Vheos.Tools.FilePatcher.Code.Helpers;
 
 namespace Vheos.Tools.FilePatcher.Code
@@ -24,7 +24,7 @@ namespace Vheos.Tools.FilePatcher.Code
 $@"{nameof(File)}: {File.Name} / {File.Exists}
 {nameof(Offset)}: {Offset}
 {nameof(Needle)}: {Needle.FormattedAOB()}
-{nameof(PresetsByName)}: {PresetsByName.Aggregate("", (acc, current ) => $"{acc}\n• {current.Key}: {current.Value.FormattedAOB()}")}";
+{nameof(PresetsByName)}: {PresetsByName.Aggregate("", (acc, current) => $"{acc}\n• {current.Key}: {current.Value.FormattedAOB()}")}";
 
         public readonly struct Json
         {

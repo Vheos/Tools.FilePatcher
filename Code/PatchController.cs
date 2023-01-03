@@ -12,7 +12,7 @@ namespace Vheos.Tools.FilePatcher.Code
             View.Name = name;
 
             View.LoadProgress = 0.0f;
-            while(View.LoadProgress < 1f)
+            while (View.LoadProgress < 1f)
             {
                 View.LoadProgress += 0.1f;
                 await Task.Delay(Random.Shared.Next(100, 500));
