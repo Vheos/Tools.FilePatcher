@@ -1,9 +1,8 @@
-﻿namespace Vheos.Tools.FilePatcher.Code.Enums
+﻿namespace Vheos.Tools.FilePatcher.Code.Enums;
+
+public enum ParseBase
 {
-    public enum ParseBase
-    {
-        Decimal,
-        Hexadecimal,
-        Auto,
-    }
+    Decimal,
+    Hexadecimal,
+    Auto,
 }

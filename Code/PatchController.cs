@@ -1,25 +1,24 @@
 ﻿using Vheos.Tools.FilePatcher.Controls;
 
-namespace Vheos.Tools.FilePatcher.Code
+namespace Vheos.Tools.FilePatcher.Code;
+
+internal class PatchController : AController<PatchModel, PatchView>
 {
-    internal class PatchController : AController<PatchModel, PatchView>
+    public PatchController(PatchModel model, PatchView view) : base(model, view)
+    { }
+
+    public async Task Initialize(string name)
     {
-        public PatchController(PatchModel model, PatchView view) : base(model, view)
-        { }
+        View.Name = name;
 
-        async public Task Initialize(string name)
+        View.LoadProgress = 0.0f;
+        while (View.LoadProgress < 1f)
         {
-            View.Name = name;
-
-            View.LoadProgress = 0.0f;
-            while (View.LoadProgress < 1f)
-            {
-                View.LoadProgress += 0.1f;
-                await Task.Delay(Random.Shared.Next(100, 500));
-            }
-
-            View.CanBeDisabled = Model.PresetsByName.ContainsKey(string.Empty);
-            View.Presets = Model.PresetsByName.Keys.Where(name => name.IsNotEmpty());
+            View.LoadProgress += 0.1f;
+            await Task.Delay(Random.Shared.Next(100, 500));
         }
+
+        View.CanBeDisabled = Model.PresetsByName.ContainsKey(string.Empty);
+        View.Presets = Model.PresetsByName.Keys.Where(name => name.IsNotEmpty());
     }
 }
