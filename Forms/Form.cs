@@ -1,32 +1,48 @@
-using System.Diagnostics;
 using System.Text.Json;
 using Vheos.Tools.FilePatcher.Code;
+using Vheos.Tools.FilePatcher.Code.Helpers;
+using Vheos.Tools.FilePatcher.Controls;
 
 namespace Vheos.Tools.FilePatcher
 {
     public partial class Form : System.Windows.Forms.Form
     {
-        JsonSerializerOptions jsonOptions = new() { WriteIndented = true, AllowTrailingCommas = true };
+        private readonly Settings Settings = new()
+        {
+            PatchFileExtension = "patch",
+            PatchFileDirectory = @"./Patches",
+            VanillaPresetAliases = new[] { "Vanilla", "Default", "Off" },
+        };
 
         public Form()
         {
             InitializeComponent();
+            InitializeJsonOptions();
 
-            try
+            int counter = 0;
+            foreach (var (name, model) in DeserializePatchFiles(Settings))
             {
-                PatchInfo.Json patchInfo = JsonSerializer.Deserialize<PatchInfo.Json>(File.ReadAllText("PatchInfo.txt"), jsonOptions);
-                label1.Text = patchInfo.Parsed.ToString();
-            }
-            catch (Exception ex)
-            {
-                label1.Text = ex.Message;
+                var view = new PatchView(_panel);
+                view.Location = new Point(0, view.Height * counter++);
+
+                var controller = new PatchController(model, view);
+                controller.Initialize(name);
             }
         }
 
-        private void label_Click(object sender, EventArgs e)
+        private static void InitializeJsonOptions()
         {
-            Label label = (Label)sender;
-            label.Dispose();
+            JsonUtil.Options.WriteIndented = true;
+            JsonUtil.Options.AllowTrailingCommas = true;
+            JsonUtil.Options.ReadCommentHandling = JsonCommentHandling.Skip;
+        }
+
+        private static IEnumerable<KeyValuePair<string, PatchModel>> DeserializePatchFiles(Settings settings)
+        {
+            foreach (var file in Directory.GetFiles(settings.PatchFileDirectory, $"*.{settings.PatchFileExtension}", SearchOption.AllDirectories))
+                if (File.ReadAllText(file).TryDeserialize(out Dictionary<string, PatchModel.Json> jsonPatches))
+                    foreach (var (name, patch) in jsonPatches)
+                        yield return new(name, new PatchModel(patch, settings.VanillaPresetAliases));
         }
     }
 }
