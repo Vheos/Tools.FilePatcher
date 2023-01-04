@@ -1,6 +1,6 @@
 ﻿namespace Vheos.Tools.FilePatcher
 {
-    partial class Form
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -39,7 +39,7 @@
             this._panel.Size = new System.Drawing.Size(427, 242);
             this._panel.TabIndex = 2;
             // 
-            // Form
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -47,7 +47,7 @@
             this.Controls.Add(this._panel);
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "Form";
+            this.Name = "MainForm";
             this.Text = "Form";
             this.ResumeLayout(false);
 
