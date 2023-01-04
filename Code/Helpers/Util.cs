@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 
 namespace Vheos.Tools.FilePatcher.Code.Helpers;
 
@@ -18,12 +19,31 @@ public static class Util
         return builder.ToString();
     }
 
+    public static bool TryReadText(this FileInfo @this, out string text)
+    {
+        if (@this.Exists)
+        {
+            text = File.ReadAllText(@this.FullName);
+            return true;
+        }
+
+        text = string.Empty;
+        return false;
+    }
+
+    public static string ReadText(this FileInfo @this)
+    {
+        if (!@this.TryReadText(out string text))
+            Debug.WriteLine($"Cannot read text from \"{@this.FullName}\"!");
+        return text;
+    }
+
     public static IEnumerable<string> SplitBySize(this string @this, int chunkSize, bool allowIncompleteChunk = false)
     {
         int length = @this.Length / chunkSize * chunkSize;
 
-        int i;
-        for (i = 0; i < length; i += chunkSize)
+        int i = 0;
+        for (; i < length; i += chunkSize)
             yield return @this.Substring(i, chunkSize);
 
         if (allowIncompleteChunk && i < @this.Length)
