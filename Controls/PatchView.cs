@@ -44,13 +44,13 @@ public partial class PatchView : UserControl
     {
         get
         {
-            foreach (object? item in _presetDropdown.Items)
+            foreach (var item in _presetDropdown.Items)
                 yield return item.ToString();
         }
         set
         {
             _presetDropdown.Items.Clear();
-            foreach (string item in value)
+            foreach (var item in value)
                 _ = _presetDropdown.Items.Add(item);
 
             _presetDropdown.Enabled = _presetDropdown.Items.Count > 0;

@@ -6,7 +6,7 @@ public static class EnumCache
         => GenericEnumCache<T>.NamesByValue.TryGetValue(text, out value);
 
     public static T ToEnumCached<T>(this string text) where T : struct, Enum
-        => text.TryToEnumCached<T>(out T value) ? value : default;
+        => text.TryToEnumCached(out T value) ? value : default;
 
     private static class GenericEnumCache<T> where T : struct, Enum
     {
@@ -15,7 +15,7 @@ public static class EnumCache
         static GenericEnumCache()
         {
             NamesByValue = new(StringComparer.OrdinalIgnoreCase);
-            foreach (string name in Enum.GetNames<T>())
+            foreach (var name in Enum.GetNames<T>())
                 NamesByValue.Add(name, Enum.Parse<T>(name));
         }
     }

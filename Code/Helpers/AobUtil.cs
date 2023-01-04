@@ -12,13 +12,15 @@ public static class AobUtil
     public static IEnumerable<byte> Parse(string text)
     {
         ValueType defaultType = ValueType.Hex;
-        foreach (string element in text.SplitTextElements())
+        foreach (var element in text.SplitTextElements())
         {
             if (element.TryToEnumCached(out ValueType valueType))
+            {
                 defaultType = valueType;
+            }
             else
             {
-                foreach (byte parsedElement in ParseTextElement(element, defaultType))
+                foreach (var parsedElement in ParseTextElement(element, defaultType))
                     yield return parsedElement;
             }
         }
@@ -27,16 +29,16 @@ public static class AobUtil
     private static IEnumerable<byte> ParseTextElement(string text, ValueType type) => type switch
     {
         ValueType.Hex => text.HexAOB(),
-        ValueType.Byte when text.TryToByte(out byte @byte) => @byte.AOB(),
-        ValueType.Byte when text.TryToSByte(out sbyte @sbyte) => @sbyte.AOB(),
-        ValueType.Short when text.TryToShort(out short @short) => @short.AOB(),
-        ValueType.Short when text.TryToUShort(out ushort @ushort) => @ushort.AOB(),
-        ValueType.Int when text.TryToInt(out int @int) => @int.AOB(),
-        ValueType.Int when text.TryToUInt(out uint @uint) => @uint.AOB(),
-        ValueType.Long when text.TryToLong(out long @long) => @long.AOB(),
-        ValueType.Long when text.TryToULong(out ulong @ulong) => @ulong.AOB(),
-        ValueType.Float when text.TryToFloat(out float @float) => @float.AOB(),
-        ValueType.Double when text.TryToDouble(out double @double) => @double.AOB(),
+        ValueType.Byte when text.TryToByte(out var @byte) => @byte.AOB(),
+        ValueType.Byte when text.TryToSByte(out var @sbyte) => @sbyte.AOB(),
+        ValueType.Short when text.TryToShort(out var @short) => @short.AOB(),
+        ValueType.Short when text.TryToUShort(out var @ushort) => @ushort.AOB(),
+        ValueType.Int when text.TryToInt(out var @int) => @int.AOB(),
+        ValueType.Int when text.TryToUInt(out var @uint) => @uint.AOB(),
+        ValueType.Long when text.TryToLong(out var @long) => @long.AOB(),
+        ValueType.Long when text.TryToULong(out var @ulong) => @ulong.AOB(),
+        ValueType.Float when text.TryToFloat(out var @float) => @float.AOB(),
+        ValueType.Double when text.TryToDouble(out var @double) => @double.AOB(),
         _ => Array.Empty<byte>()
     };
     private static string HexDigits(this string @this) => Regex.Replace(@this, @"[^0-9a-f]+", "", RegexOptions.IgnoreCase);

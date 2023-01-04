@@ -14,7 +14,7 @@ public static class Util
     public static string FormattedAOB(this IEnumerable<byte> @this)
     {
         StringBuilder builder = new();
-        foreach (byte @byte in @this)
+        foreach (var @byte in @this)
             _ = builder.Append($"{@byte:X2} ");
         return builder.ToString();
     }
@@ -33,7 +33,7 @@ public static class Util
 
     public static string ReadText(this FileInfo @this)
     {
-        if (!@this.TryReadText(out string text))
+        if (!@this.TryReadText(out var text))
             Debug.WriteLine($"Cannot read text from \"{@this.FullName}\"!");
         return text;
     }
@@ -55,8 +55,8 @@ public static class Util
         where K1 : notnull
     {
         Dictionary<K2, V2> toDictionary = new(comparer);
-        foreach (KeyValuePair<K1, V1> kvp in @this)
-            toDictionary[keyFunc(kvp.Key)] = valueFunc(kvp.Value);
+        foreach (var (key, value) in @this)
+            toDictionary[keyFunc(key)] = valueFunc(value);
         return toDictionary;
     }
 

@@ -72,65 +72,65 @@ public static partial class ParseExtensions
 
     public static byte ToByte(this string @this, ParseBase parseBase = ParseBase.Decimal)
     {
-        if (!@this.TryToByte(out byte value, parseBase))
+        if (!@this.TryToByte(out var value, parseBase))
             @this.LogWarning<byte>();
         return value;
     }
     public static sbyte ToSByte(this string @this, ParseBase parseBase = ParseBase.Decimal)
     {
-        if (!@this.TryToSByte(out sbyte value, parseBase))
+        if (!@this.TryToSByte(out var value, parseBase))
             @this.LogWarning<sbyte>();
         return value;
     }
 
     public static int ToInt(this string @this, ParseBase parseBase = ParseBase.Decimal)
     {
-        if (!@this.TryToInt(out int value, parseBase))
+        if (!@this.TryToInt(out var value, parseBase))
             @this.LogWarning<int>();
         return value;
     }
     public static uint ToUInt(this string @this, ParseBase parseBase = ParseBase.Decimal)
     {
-        if (!@this.TryToUInt(out uint value, parseBase))
+        if (!@this.TryToUInt(out var value, parseBase))
             @this.LogWarning<uint>();
         return value;
     }
 
     public static long ToLong(this string @this, ParseBase parseBase = ParseBase.Decimal)
     {
-        if (!@this.TryToLong(out long value, parseBase))
+        if (!@this.TryToLong(out var value, parseBase))
             @this.LogWarning<long>();
         return value;
     }
     public static ulong ToULong(this string @this, ParseBase parseBase = ParseBase.Decimal)
     {
-        if (!@this.TryToULong(out ulong value, parseBase))
+        if (!@this.TryToULong(out var value, parseBase))
             @this.LogWarning<ulong>();
         return value;
     }
 
     public static float ToFloat(this string @this)
     {
-        if (!@this.TryToFloat(out float value))
+        if (!@this.TryToFloat(out var value))
             @this.LogWarning<float>();
         return value;
     }
     public static double ToDouble(this string @this)
     {
-        if (!@this.TryToDouble(out double value))
+        if (!@this.TryToDouble(out var value))
             @this.LogWarning<double>();
         return value;
     }
 
     public static bool ToBool(this string @this)
     {
-        if (!@this.TryToBool(out bool value))
+        if (!@this.TryToBool(out var value))
             @this.LogWarning<bool>();
         return value;
     }
     public static BigInteger ToBigInteger(this string @this)
     {
-        if (!@this.TryToBigInteger(out BigInteger value))
+        if (!@this.TryToBigInteger(out var value))
             @this.LogWarning<BigInteger>();
         return value;
     }
