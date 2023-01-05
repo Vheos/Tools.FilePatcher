@@ -34,7 +34,7 @@ public class PatcherSettings
             PatchExtension = "patch",
             PatchesDirectory = @"./Patches",
             IncludeSubdirectories = "true",
-            VanillaPresetAliases = new[] { "", "Vanilla", "Default", "Off" },
+            VanillaPresetAliases = new[] { string.Empty, "Vanilla", "Default", "Off" },
         };
 
         public Json()
