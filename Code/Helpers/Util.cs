@@ -86,7 +86,6 @@ public static class Util
         return text;
     }
 
-
     public static string FormattedAOB(this IEnumerable<byte> @this)
     {
         StringBuilder builder = new();

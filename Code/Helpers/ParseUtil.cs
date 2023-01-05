@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
-using System.Numerics;
 using Vheos.Tools.FilePatcher.Code.Enums;
 
 namespace Vheos.Tools.FilePatcher.Code.Helpers;

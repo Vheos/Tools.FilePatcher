@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using Vheos.Helpers.Collections;
 using Vheos.Tools.FilePatcher.Controls;
-using Vheos.Helpers.Collections;
-using Vheos.Tools.FilePatcher.Code.Enums;
 
 namespace Vheos.Tools.FilePatcher.Code;
 
@@ -39,6 +36,5 @@ internal class PatchController : AController<PatchModel, PatchView>
             View.TooltipText = string.Join('\n', Model.Errors);
             View.TooltipIcon = ToolTipIcon.Error;
         }
-
     }
 }
