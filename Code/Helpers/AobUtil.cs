@@ -6,6 +6,11 @@ namespace Vheos.Tools.FilePatcher.Code.Helpers;
 
 public static class AobUtil
 {
+    public static bool TryParseToArray(string text, out byte[] @out)
+    {
+        @out = ParseToArray(text);
+        return @out.Length > 0;
+    }
     public static byte[] ParseToArray(string text) => Parse(text).ToArray();
 
     public static IEnumerable<byte> Parse(string text)
@@ -14,14 +19,10 @@ public static class AobUtil
         foreach (var element in text.SplitTextElements())
         {
             if (element.TryToEnumCached(out ValueType valueType))
-            {
                 defaultType = valueType;
-            }
             else
-            {
                 foreach (var parsedElement in ParseTextElement(element, defaultType))
                     yield return parsedElement;
-            }
         }
     }
 
