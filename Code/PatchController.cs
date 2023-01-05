@@ -1,4 +1,8 @@
-﻿using Vheos.Tools.FilePatcher.Controls;
+﻿using System.Diagnostics;
+using System.Linq;
+using Vheos.Tools.FilePatcher.Controls;
+using Vheos.Helpers.Collections;
+using Vheos.Tools.FilePatcher.Code.Enums;
 
 namespace Vheos.Tools.FilePatcher.Code;
 
@@ -11,14 +15,30 @@ internal class PatchController : AController<PatchModel, PatchView>
     {
         View.Name = name;
 
-        View.LoadProgress = 0.0f;
-        while (View.LoadProgress < 1f)
+        View.NameState = ControlState.Disabled;
+        View.ProgressBarState = ControlState.Disabled;
+        await Model.MOCK_ScanForNeedle(View.SetLoadProgress);
+        View.ProgressBarState = ControlState.Hidden;
+        View.NameState = ControlState.Enabled;
+
+        View.CheckboxState = Model.VanillaAOB != null ? ControlState.Enabled : ControlState.Hidden;
+        View.Presets = Model.CustomPresets.Keys;
+        View.PresetState = Model.CustomPresets.Count >= 2 ? ControlState.Enabled : ControlState.Hidden;
+        if (Model.CustomPresets.Keys.TryGetAny(out var preset))
+            View.CurrentPreset = preset;
+
+        View.EditorPlaceholderText = Model.Editor?.ToString() ?? "";
+        View.EditorState = Model.Editor.HasValue ? ControlState.Enabled : ControlState.Hidden;
+
+        if (Model.HasErrors)
         {
-            View.LoadProgress += 0.1f;
-            await Task.Delay(Random.Shared.Next(100, 500));
+            if (View.CheckboxState == ControlState.Enabled)
+                View.CheckboxState = ControlState.Disabled;
+
+            View.NameColor = Color.Red;
+            View.TooltipText = string.Join('\n', Model.Errors);
+            View.TooltipIcon = ToolTipIcon.Error;
         }
 
-        View.CanBeDisabled = Model.PresetsByName.ContainsKey(string.Empty);
-        View.Presets = Model.PresetsByName.Keys.Where(name => name.IsNotEmpty());
     }
 }
