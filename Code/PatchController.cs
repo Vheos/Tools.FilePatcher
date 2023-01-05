@@ -33,7 +33,7 @@ internal class PatchController : AController<PatchModel, PatchView>
             View.TooltipText = Model.Errors.ToString().Replace(", ", "\n");
             View.TooltipIcon = ToolTipIcon.Error;
         }
-        else if(Model.HasWarnings)
+        else if (Model.HasWarnings)
         {
             View.NameColor = Color.Orange;
             View.TooltipText = Model.Warnings.ToString().Replace(", ", "\n");

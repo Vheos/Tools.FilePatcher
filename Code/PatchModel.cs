@@ -1,6 +1,6 @@
-﻿using Vheos.Tools.FilePatcher.Code.Enums;
+﻿using Vheos.Helpers.Collections;
+using Vheos.Tools.FilePatcher.Code.Enums;
 using Vheos.Tools.FilePatcher.Code.Helpers;
-using Vheos.Helpers.Collections;
 
 namespace Vheos.Tools.FilePatcher.Code;
 
@@ -35,7 +35,7 @@ public class PatchModel
         CustomPresets = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
         InitializePresets(json.Presets, vanillaAliases);
     }
-    private async Task InitializeAsync()
+    private void Initialize()
     {
 
     }
@@ -116,12 +116,11 @@ public class PatchModel
         }
     }
 
-    public static async Task<PatchModel> Create(Json json, IEnumerable<string> vanillaAliases)
+    public static PatchModel Create(Json json, IEnumerable<string> vanillaAliases)
     {
         PatchModel newPatchModel = new(json, vanillaAliases);
-        await newPatchModel.InitializeAsync();
+        newPatchModel.Initialize();
         return newPatchModel;
-
 
     }
 

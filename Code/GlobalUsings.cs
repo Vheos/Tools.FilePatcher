@@ -1,2 +1,2 @@
-﻿global using Vheos.Helpers.Math;
-global using Vheos.Helpers.Common;
+﻿global using Vheos.Helpers.Common;
+global using Vheos.Helpers.Math;
