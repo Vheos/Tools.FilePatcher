@@ -1,51 +1,133 @@
 ﻿using Vheos.Tools.FilePatcher.Code.Enums;
 using Vheos.Tools.FilePatcher.Code.Helpers;
-using ValueType = Vheos.Tools.FilePatcher.Code.Enums.ValueType;
+using Vheos.Helpers.Collections;
 
 namespace Vheos.Tools.FilePatcher.Code;
 
 public class PatchModel
 {
-    public readonly FileInfo File;
-    public readonly int? Offset;
-    public readonly byte[] Needle;
-    public readonly byte[] VanillaAOB;
-    public readonly IReadOnlyDictionary<string, byte[]> CustomPresets;
-    public readonly ValueType? Editor;
-
-    public readonly PresetInspection PresetInspection;
-    public readonly PatchErrors Errors;
-
-    public int MaxPresetNameLength => CustomPresets.Count > 0 ? CustomPresets.Keys.Max(name => name.Length) : 0;
-    public int MaxPresetAobLength => CustomPresets.Count > 0 ? CustomPresets.Values.Max(aob => aob.Length) : 0;
-    public bool HasErrors => Errors != PatchErrors.None;
-
-    public PatchModel(Json json, IEnumerable<string> vanillaPresetAliases)
+    public readonly struct Json
     {
-        File = new FileInfo(json.File);
-
-        Offset = json.Offset.TryToInt(out var offset, ParseBase.Auto)
-            ? offset : null;
-
-        Needle = AobUtil.ParseToArray(json.Needle);
-
-        VanillaAOB = json.Presets.TryGetValue(out var stringAob, name => vanillaPresetAliases.Contains(name))
-            ? AobUtil.ParseToArray(stringAob) : Array.Empty<byte>();
-
-        CustomPresets = json.Presets.WithoutKeys(vanillaPresetAliases.Append(string.Empty))
-            .RetypeValues(AobUtil.ParseToArray, StringComparer.OrdinalIgnoreCase);
-
-        Editor = json.Editor.TryToEnumCached(out ValueType valueType)
-            ? valueType : null;
-
-        Errors = CheckForErrors();
+        public string File { get; init; }
+        public string Offset { get; init; }
+        public Dictionary<string, string> Presets { get; init; }
     }
 
-    public static readonly PatchModel Default = new(Json.Default, Array.Empty<string>());
+    public FileInfo? File { get; private set; }
+    public int Offset { get; private set; }
+    public byte[] VanillaAOB { get; private set; }
+    public Dictionary<string, byte[]> CustomPresets { get; private set; }
+
+    public PatchErrors Errors { get; private set; }
+    public PatchWarnings Warnings { get; private set; }
+    public PresetInspection PresetInspection { get; private set; }
+
+    public int MaxPresetNameLength => CustomPresets.Keys.Append(string.Empty).Max(name => name.Length);
+    public bool HasErrors => Errors != PatchErrors.None;
+    public bool HasWarnings => Warnings != PatchWarnings.None;
+
+    public PatchModel(Json json, IEnumerable<string> vanillaAliases)
+    {
+        InitializeFile(json.File);
+        InitializeOffset(json.Offset, File);
+
+        VanillaAOB = Array.Empty<byte>();
+        CustomPresets = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+        InitializePresets(json.Presets, vanillaAliases);
+    }
+    private async Task InitializeAsync()
+    {
+
+    }
+
+    private void InitializeFile(string path)
+    {
+        if (path.IsNullOrEmpty())
+        {
+            Errors |= PatchErrors.FileNotDefined;
+            return;
+        }
+
+        File = new(path);
+        if (!File.Exists)
+        {
+            Errors |= PatchErrors.FileNotFound;
+            return;
+        }
+
+        if (!File.IsReadable())
+            Errors |= PatchErrors.FileNotReadable;
+
+        if (!File.IsWriteable())
+            Errors |= PatchErrors.FileNotWriteable;
+    }
+    private void InitializeOffset(string stringOffset, FileInfo? file)
+    {
+        if (stringOffset.IsNullOrEmpty())
+        {
+            Errors |= PatchErrors.OffsetNotDefined;
+            return;
+        }
+
+        if (!stringOffset.TryToInt(out var offset, ParseBase.Auto))
+            Errors |= PatchErrors.OffsetNotDefined;
+        else if (file != null && file.Exists && offset > file.Length)
+            Errors |= PatchErrors.OffsetOutOfBounds;
+
+        Offset = offset;
+    }
+    private void InitializePresets(Dictionary<string, string> stringPresets, IEnumerable<string> vanillaAliases)
+    {
+        if (stringPresets.IsNullOrEmpty())
+        {
+            Errors |= PatchErrors.PresetsNotDefined;
+            return;
+        }
+
+        List<string> vanillaStringAobs = new();
+        foreach (var (name, stringAob) in stringPresets)
+        {
+            if (vanillaAliases.Contains(name))
+                vanillaStringAobs.Add(stringAob);
+            else if (!AobUtil.TryParseToArray(stringAob, out var aob))
+                Warnings |= PatchWarnings.PresetNotParseable;
+            else
+                CustomPresets[name] = aob;
+        }
+
+        if (vanillaStringAobs.Count == 0)
+            Errors |= PatchErrors.VanillaPresetNotDefined;
+        else if (vanillaStringAobs.Count >= 2)
+            Warnings |= PatchWarnings.MultipleVanillaPresetsDefined;
+
+        if (vanillaStringAobs.Select(AobUtil.ParseToArray).TryGetFirst(out var vanillaAob, aob => aob.Length > 0))
+        {
+            VanillaAOB = vanillaAob;
+
+            if (CustomPresets.Values.Any(aob => aob.Length > VanillaAOB.Length))
+                Errors |= PatchErrors.PresetLongerThanVanilla;
+
+            if (CustomPresets.Values.Any(aob => aob.Length < VanillaAOB.Length))
+                Warnings |= PatchWarnings.PresetShorterThanVanilla;
+        }
+        else
+        {
+            Errors |= PatchErrors.VanillaPresetNotParseable;
+        }
+    }
+
+    public static async Task<PatchModel> Create(Json json, IEnumerable<string> vanillaAliases)
+    {
+        PatchModel newPatchModel = new(json, vanillaAliases);
+        await newPatchModel.InitializeAsync();
+        return newPatchModel;
+
+
+    }
 
     private PresetInspection InspectCurrentPreset()
     {
-        var bytes = File.ReadBytes(Offset.Value, MaxPresetAobLength);
+        byte[] bytes = File.ReadBytes(Offset, VanillaAOB.Length);
 
         if (bytes.Compare(VanillaAOB))
             return new(PresetType.Vanilla, VanillaAOB, string.Empty);
@@ -57,34 +139,6 @@ public class PatchModel
         return new(PresetType.Unknown, bytes, string.Empty);
 
     }
-
-    private PatchErrors CheckForErrors()
-    {
-        PatchErrors errors = PatchErrors.None;
-        if (!File.Exists)
-        {
-            errors |= PatchErrors.FileNotFound;
-        }
-        else
-        {
-            if (!File.CanBeRead())
-                errors |= PatchErrors.FileCannotBeRead;
-            if (!File.CanBeWritten())
-                errors |= PatchErrors.FileCannotBeWritten;
-        }
-
-        if (!Offset.HasValue && Needle.Length == 0)
-            errors |= PatchErrors.OffsetAndNeedleNotDefined;
-
-        if (File.Exists && Offset.HasValue && File.Length <= Offset)
-            errors |= PatchErrors.OffsetOutOfBounds;
-
-        if (VanillaAOB == null)
-            errors |= PatchErrors.VanillaPresetNotDefined;
-
-        return errors;
-    }
-
     public async Task<uint?> MOCK_ScanForNeedle(Action<float>? onUpdate = null)
     {
         onUpdate?.Invoke(0f);
@@ -98,35 +152,5 @@ public class PatchModel
 
         onUpdate?.Invoke(1f);
         return null;
-    }
-
-    public readonly struct Json
-    {
-        public string File { get; init; }
-        public string Offset { get; init; }
-        public string Needle { get; init; }
-        public string Anchor { get; init; }
-        public string Editor { get; init; }
-        public Dictionary<string, string> Presets { get; init; }
-
-        public static readonly Json Default = new()
-        {
-            File = string.Empty,
-            Offset = string.Empty,
-            Needle = string.Empty,
-            Anchor = string.Empty,
-            Editor = string.Empty,
-            Presets = new(),
-        };
-
-        public Json()
-        {
-            File = Default.File;
-            Offset = Default.Offset;
-            Needle = Default.Needle;
-            Anchor = Default.Anchor;
-            Editor = Default.Editor;
-            Presets = Default.Presets;
-        }
     }
 }

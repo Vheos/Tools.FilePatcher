@@ -24,17 +24,20 @@ internal class PatchController : AController<PatchModel, PatchView>
         if (Model.CustomPresets.Keys.TryGetAny(out var preset))
             View.CurrentPreset = preset;
 
-        View.EditorPlaceholderText = Model.Editor?.ToString() ?? "";
-        View.EditorState = Model.Editor.HasValue ? ControlState.Enabled : ControlState.Hidden;
-
         if (Model.HasErrors)
         {
             if (View.CheckboxState == ControlState.Enabled)
                 View.CheckboxState = ControlState.Disabled;
 
             View.NameColor = Color.Red;
-            View.TooltipText = string.Join('\n', Model.Errors);
+            View.TooltipText = Model.Errors.ToString().Replace(", ", "\n");
             View.TooltipIcon = ToolTipIcon.Error;
+        }
+        else if(Model.HasWarnings)
+        {
+            View.NameColor = Color.Orange;
+            View.TooltipText = Model.Warnings.ToString().Replace(", ", "\n");
+            View.TooltipIcon = ToolTipIcon.Warning;
         }
     }
 }

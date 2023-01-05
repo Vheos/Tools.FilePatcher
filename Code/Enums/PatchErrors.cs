@@ -5,14 +5,19 @@ public enum PatchErrors
 {
     None = 0,
 
-    FileNotFound = 1 << 0,
-    FileCannotBeRead = 1 << 1,
-    FileCannotBeWritten = 1 << 2,
+    FileNotDefined = 1 << 0,
+    FileNotFound = 1 << 1,
+    FileNotReadable = 1 << 2,
+    FileNotWriteable = 1 << 3,
 
-    OffsetAndNeedleNotDefined = 1 << 3,
-    OffsetOutOfBounds = 1 << 4,
-    NeedleNotFound = 1 << 5,
+    OffsetNotDefined = 1 << 4,
+    OffsetNotParseable = 1 << 5,
+    OffsetOutOfBounds = 1 << 6,
 
-    VanillaPresetNotDefined = 1 << 6,
-    PresetNotDetected = 1 << 7,
+    PresetsNotDefined = 1 << 7,
+    VanillaPresetNotDefined = 1 << 8,
+    VanillaPresetNotParseable = 1 << 9,
+
+    PresetLongerThanVanilla = 1 << 10,
+    PresetNotDetected = 1 << 11,
 }
