@@ -12,9 +12,9 @@ public static class Util
     public static bool IsDecimalNumber(this string @this) => @this.All(c => c is >= '0' and <= '9');
     public static bool IsHexNumber(this string @this) => @this.All(c => c is >= '0' and <= '9' or >= 'a' and <= 'f' or >= 'A' and <= 'F');
 
-    public static FileStream OpenForReading(this FileInfo @this) => @this.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
-    public static FileStream OpenForWriting(this FileInfo @this) => @this.Open(FileMode.Open, FileAccess.Write, FileShare.None);
-    public static bool CanBeRead(this FileInfo @this)
+    public static FileStream OpenForReading(this FileInfo @this) => @this.Open(FileMode.Open, FileAccess.Read);
+    public static FileStream OpenForWriting(this FileInfo @this) => @this.Open(FileMode.Open, FileAccess.Write);
+    public static bool IsReadable(this FileInfo @this)
     {
         if (!@this.Exists)
             return false;
@@ -29,7 +29,7 @@ public static class Util
             return false;
         }
     }
-    public static bool CanBeWritten(this FileInfo @this)
+    public static bool IsWriteable(this FileInfo @this)
     {
         if (!@this.Exists || @this.IsReadOnly)
             return false;
