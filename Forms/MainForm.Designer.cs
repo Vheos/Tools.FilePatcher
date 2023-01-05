@@ -37,7 +37,7 @@
             this._panel.Location = new System.Drawing.Point(0, 0);
             this._panel.Name = "_panel";
             this._panel.Size = new System.Drawing.Size(427, 242);
-            this._panel.TabIndex = 2;
+            this._panel.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -54,6 +54,7 @@
         }
 
         #endregion
+
         private Panel _panel;
     }
 }

@@ -5,12 +5,12 @@ using Vheos.Tools.FilePatcher.Controls;
 
 namespace Vheos.Tools.FilePatcher;
 
-public partial class Form : System.Windows.Forms.Form
+public partial class MainForm : Form
 {
     private static readonly string ExecutableFileName = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
     private const string PatcherSettingsExtension = "settings";
 
-    public Form()
+    public MainForm()
     {
         InitializeComponent();
         InitializeJsonOptions();
@@ -23,7 +23,7 @@ public partial class Form : System.Windows.Forms.Form
             view.Location = new Point(0, view.Height * counter++);
 
             PatchController controller = new(model, view);
-            _ = controller.Initialize(name);
+            controller.Initialize(name);
         }
     }
 
