@@ -1,5 +1,9 @@
-﻿using Vheos.Helpers.Collections;
+﻿using System.Diagnostics;
+using Vheos.Helpers.Collections;
+using Vheos.Tools.FilePatcher.Code.Enums;
+using Vheos.Tools.FilePatcher.Code.Helpers;
 using Vheos.Tools.FilePatcher.Controls;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Vheos.Tools.FilePatcher.Code;
 
@@ -8,36 +12,59 @@ internal class PatchController : AController<PatchModel, PatchView>
     public PatchController(PatchModel model, PatchView view) : base(model, view)
     { }
 
-    public async Task Initialize(string name)
+    public async Task InitializeAsync(string name)
     {
         View.Name = name;
-
-        View.NameState = ControlState.Disabled;
-        View.ProgressBarState = ControlState.Disabled;
-        await Model.MOCK_ScanForNeedle(View.SetLoadProgress);
-        View.ProgressBarState = ControlState.Hidden;
-        View.NameState = ControlState.Enabled;
-
-        View.CheckboxState = Model.VanillaAOB != null ? ControlState.Enabled : ControlState.Hidden;
-        View.Presets = Model.CustomPresets.Keys;
-        View.PresetState = Model.CustomPresets.Count >= 2 ? ControlState.Enabled : ControlState.Hidden;
-        if (Model.CustomPresets.Keys.TryGetAny(out var preset))
-            View.CurrentPreset = preset;
-
         if (Model.HasErrors)
         {
-            if (View.CheckboxState == ControlState.Enabled)
-                View.CheckboxState = ControlState.Disabled;
-
-            View.NameColor = Color.Red;
-            View.TooltipText = Model.Errors.ToString().Replace(", ", "\n");
-            View.TooltipIcon = ToolTipIcon.Error;
+            View.SetErrorState();
+            View.TooltipText = string.Join('\n', Model.Messages.Errors.Select(message => message.Title));
+            return;
         }
-        else if (Model.HasWarnings)
+
+        View.PresetControl.Visible = false;
+        View.EditorControl.Visible = false;
+        View.StartLoading();
+        await Model.InitializeAsync(progress => View.LoadingBarProgress = progress);
+        View.StopLoading();
+
+        View.CheckboxControl.Enabled = true;
+        View.TooltipText = Model.Tooltip;
+        View.Presets = Model.CustomPresets.Keys;
+        View.EditorControl.Visible = true;
+        View.EditorControl.Enabled = false;
+
+        UpdateView(Model.ReadPreset());
+        View.OnChangeActivity += currentState =>
         {
-            View.NameColor = Color.Orange;
-            View.TooltipText = Model.Warnings.ToString().Replace(", ", "\n");
-            View.TooltipIcon = ToolTipIcon.Warning;
+            PatchFileOp presetOperation = currentState ? Model.WritePreset(View.CurrentPreset) : Model.WriteVanilla();
+            UpdateView(presetOperation);
+        };
+        View.OnChangePreset += presetName =>
+        {
+            PatchFileOp presetOperation = Model.WritePreset(presetName);
+            UpdateView(presetOperation);
+        };
+    }
+
+    private void UpdateView(PatchFileOp presetOperation)
+    {
+        if (!presetOperation.Success)
+            return;
+
+        using (View.SilentEvents)
+        {
+            View.IsActive = presetOperation.Type == PresetType.Custom;
+            View.TextColor = presetOperation.Type switch
+            {
+                PresetType.Vanilla => PatchView.DisabledColor,
+                PresetType.Custom => PatchView.EnabledColor,
+                _ => PatchView.WarningColor,
+            };
+            View.PresetControl.Enabled = presetOperation.Type != PresetType.Vanilla;
+            if (presetOperation.Type == PresetType.Custom)
+                View.CurrentPreset = presetOperation.Name;
+            View.Editor = presetOperation.AOB.Aggregate(string.Empty, (acc, current) => $"{acc}{current:X2}");
         }
     }
 }
