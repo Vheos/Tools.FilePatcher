@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._valueInput = new System.Windows.Forms.TextBox();
+            this._editorInput = new System.Windows.Forms.TextBox();
             this._presetDropdown = new System.Windows.Forms.ComboBox();
             this._progressBar = new System.Windows.Forms.ProgressBar();
             this._checkbox = new System.Windows.Forms.CheckBox();
@@ -39,20 +39,18 @@
             this._tableLayout.SuspendLayout();
             this.SuspendLayout();
             // 
-            // _valueInput
+            // _editorInput
             // 
-            this._valueInput.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this._valueInput.Location = new System.Drawing.Point(424, 4);
-            this._valueInput.Margin = new System.Windows.Forms.Padding(0);
-            this._valueInput.Name = "_valueInput";
-            this._valueInput.PlaceholderText = "Value";
-            this._valueInput.Size = new System.Drawing.Size(94, 26);
-            this._valueInput.TabIndex = 2;
+            this._editorInput.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this._editorInput.Location = new System.Drawing.Point(424, 4);
+            this._editorInput.Margin = new System.Windows.Forms.Padding(0);
+            this._editorInput.Name = "_editorInput";
+            this._editorInput.Size = new System.Drawing.Size(94, 26);
+            this._editorInput.TabIndex = 2;
             // 
             // _presetDropdown
             // 
             this._presetDropdown.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this._presetDropdown.DisplayMember = "Preset";
             this._presetDropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._presetDropdown.FormattingEnabled = true;
             this._presetDropdown.Location = new System.Drawing.Point(324, 3);
@@ -106,7 +104,7 @@
             this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this._tableLayout.Controls.Add(this._checkbox, 0, 0);
             this._tableLayout.Controls.Add(this._nameLabel, 1, 0);
-            this._tableLayout.Controls.Add(this._valueInput, 3, 0);
+            this._tableLayout.Controls.Add(this._editorInput, 3, 0);
             this._tableLayout.Controls.Add(this._presetDropdown, 2, 0);
             this._tableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayout.Location = new System.Drawing.Point(0, 0);
@@ -121,10 +119,8 @@
             // 
             this._tooltip.AutomaticDelay = 0;
             this._tooltip.AutoPopDelay = 0;
-            this._tooltip.InitialDelay = 100;
+            this._tooltip.InitialDelay = 200;
             this._tooltip.ReshowDelay = 0;
-            this._tooltip.UseAnimation = false;
-            this._tooltip.UseFading = false;
             // 
             // PatchView
             // 
@@ -144,7 +140,7 @@
         }
 
         #endregion
-        private TextBox _valueInput;
+        private TextBox _editorInput;
         private ComboBox _presetDropdown;
         private CheckBox _checkbox;
         private ProgressBar _progressBar;
