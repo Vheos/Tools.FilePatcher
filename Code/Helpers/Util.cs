@@ -86,6 +86,21 @@ public static class Util
         return text;
     }
 
+    public static bool TryWriteBytes(this FileInfo @this, byte[] bytes, int offset)
+    {
+        try
+        {
+            using var stream = @this.OpenForWriting();
+            stream.Position = offset;
+            stream.Write(bytes);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public static string FormattedAOB(this IEnumerable<byte> @this)
     {
         StringBuilder builder = new();
@@ -99,7 +114,6 @@ public static class Util
         @this.Visible = state != ControlState.Hidden;
         @this.Enabled = state == ControlState.Enabled;
     }
-
     public static ControlState GetState(this Control @this)
         => @this.Visible && @this.Enabled ? ControlState.Enabled
         : @this.Visible ? ControlState.Disabled
