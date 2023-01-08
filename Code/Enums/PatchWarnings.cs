@@ -8,4 +8,5 @@ public enum PatchWarnings
     MultipleVanillaPresetsDefined = 1 << 0,
     PresetNotParseable = 1 << 1,
     PresetShorterThanVanilla = 1 << 2,
+
 }

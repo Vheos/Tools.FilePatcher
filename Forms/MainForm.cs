@@ -23,7 +23,7 @@ public partial class MainForm : Form
             view.Location = new Point(0, view.Height * counter++);
 
             PatchController controller = new(model, view);
-            controller.Initialize(name);
+            controller.InitializeAsync(name);
         }
     }
 

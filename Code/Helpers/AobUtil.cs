@@ -37,17 +37,17 @@ public static class AobUtil
     public static byte[] AOB(this float @this) => BitConverter.GetBytes(@this);
     public static byte[] AOB(this double @this) => BitConverter.GetBytes(@this);
 
-    public static bool Compare(this byte[] @this, byte[] other, bool requreExactLength = false)
+    public static bool Compare(this byte[] @this, byte[] other, bool requireExactLength = false)
     {
         if (@this == other)
             return true;
         if (@this == null || other == null)
             return false;
-        if (requreExactLength && @this.Length != other.Length)
+        if (requireExactLength && @this.Length != other.Length)
             return false;
 
-        var length = @this.Length.Min(other.Length);
-        for (int i = 0; i < length; i++)
+        var minLength = @this.Length.Min(other.Length);
+        for (int i = 0; i < minLength; i++)
             if (@this[i] != other[i])
                 return false;
 
