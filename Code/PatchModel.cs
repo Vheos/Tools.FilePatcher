@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-using System.Xml.Linq;
-using Vheos.Helpers.Collections;
+﻿using Vheos.Helpers.Collections;
 using Vheos.Tools.FilePatcher.Code.Enums;
 using Vheos.Tools.FilePatcher.Code.Helpers;
 using Vheos.Tools.FilePatcher.Code.Message;
@@ -65,7 +63,6 @@ public class PatchModel
     public PatchFileOp WritePreset(string name)
         => CustomPresets.TryGetValue(name, out byte[]? aob) && File!.TryWriteBytes(aob, Offset)
         ? PatchFileOp.Custom(name, aob) : PatchFileOp.Failed(PresetType.Custom);
-
 
     private void InitializeFile(string path)
     {

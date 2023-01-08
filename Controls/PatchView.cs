@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using Vheos.Tools.FilePatcher.Code.Helpers;
 
 namespace Vheos.Tools.FilePatcher.Controls;
@@ -104,8 +103,6 @@ public partial class PatchView : UserControl
         _presetDropdown.SelectedIndexChanged += OnChangePresetDropdownIndex;
     }
 
-
-
     public void HideAll()
     {
         foreach (var control in VisualControls)
@@ -116,10 +113,7 @@ public partial class PatchView : UserControl
         _progressBar.Visible = true;
         LoadingBarProgress = 0;
     }
-    public void StopLoading()
-    {
-        _progressBar.Visible = false;
-    }
+    public void StopLoading() => _progressBar.Visible = false;
     public void SetErrorState()
     {
         HideAll();
@@ -138,8 +132,7 @@ public partial class PatchView : UserControl
         set => _tooltip.ToolTipIcon = value;
     }
 
-
-    private  Lock _silentEvents = new();
+    private readonly Lock _silentEvents = new();
     public Lock SilentEvents
     {
         get
@@ -158,7 +151,7 @@ public partial class PatchView : UserControl
         _previousPreset = CurrentPreset;
 
         if (!_silentEvents)
-            OnChangePreset(CurrentPreset);        
+            OnChangePreset(CurrentPreset);
     }
     private void OnChangeCheckboxState(object? sender, EventArgs e)
     {

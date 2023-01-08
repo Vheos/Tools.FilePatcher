@@ -1,9 +1,5 @@
-﻿using System.Diagnostics;
-using Vheos.Helpers.Collections;
-using Vheos.Tools.FilePatcher.Code.Enums;
-using Vheos.Tools.FilePatcher.Code.Helpers;
+﻿using Vheos.Tools.FilePatcher.Code.Enums;
 using Vheos.Tools.FilePatcher.Controls;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Vheos.Tools.FilePatcher.Code;
 
