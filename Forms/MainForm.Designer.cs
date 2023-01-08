@@ -1,6 +1,6 @@
 ﻿namespace Vheos.Tools.FilePatcher
 {
-    partial class Form
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,12 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this._panel = new System.Windows.Forms.Panel();
+            this.SuspendLayout();
+            // 
+            // _panel
+            // 
+            this._panel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._panel.Location = new System.Drawing.Point(0, 0);
+            this._panel.Name = "_panel";
+            this._panel.Size = new System.Drawing.Size(427, 242);
+            this._panel.TabIndex = 0;
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(427, 242);
+            this.Controls.Add(this._panel);
+            this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "MainForm";
             this.Text = "Form";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private Panel _panel;
     }
 }
